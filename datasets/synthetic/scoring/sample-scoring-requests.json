@@ -1,0 +1,187 @@
+[
+  {
+    "requestId": "score-001",
+    "entityId": "customer-42",
+    "features": {
+      "account_age_days": 730,
+      "total_transactions": 145,
+      "avg_transaction_value": 320.50,
+      "failed_transactions_30d": 2,
+      "countries_transacted": 3,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 0,
+      "last_login_days_ago": 1,
+      "support_tickets_open": 0
+    },
+    "scoringProfile": "credit-risk-v2",
+    "_expectedDecision": "APPROVE",
+    "_notes": "Low-risk established customer, verified KYC, minimal failures"
+  },
+  {
+    "requestId": "score-002",
+    "entityId": "customer-99",
+    "features": {
+      "account_age_days": 15,
+      "total_transactions": 8,
+      "avg_transaction_value": 4500.00,
+      "failed_transactions_30d": 5,
+      "countries_transacted": 7,
+      "kyc_status": "PENDING",
+      "risk_flag_count": 3,
+      "last_login_days_ago": 0,
+      "support_tickets_open": 2,
+      "needs_history": false
+    },
+    "scoringProfile": "fraud-detection-v1",
+    "_expectedDecision": "ESCALATE",
+    "_notes": "High-risk: new account, many failures, unverified, multiple countries"
+  },
+  {
+    "requestId": "score-003",
+    "entityId": "business-77",
+    "features": {
+      "account_age_days": 180,
+      "total_transactions": 55,
+      "avg_transaction_value": 1800.00,
+      "failed_transactions_30d": 3,
+      "countries_transacted": 4,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 1,
+      "last_login_days_ago": 3,
+      "support_tickets_open": 1,
+      "needs_history": true,
+      "prior_score_required": true
+    },
+    "scoringProfile": "credit-risk-v2",
+    "_expectedDecision": "REVIEW",
+    "_notes": "Medium risk: needs historical enrichment, moderate failure rate"
+  },
+  {
+    "requestId": "score-004",
+    "entityId": "customer-200",
+    "features": {
+      "account_age_days": 1095,
+      "total_transactions": 892,
+      "avg_transaction_value": 150.00,
+      "failed_transactions_30d": 0,
+      "countries_transacted": 1,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 0,
+      "last_login_days_ago": 1,
+      "support_tickets_open": 0
+    },
+    "scoringProfile": "credit-risk-v2",
+    "_expectedDecision": "APPROVE",
+    "_notes": "Very low risk: long-standing customer, clean record, domestic only"
+  },
+  {
+    "requestId": "score-005",
+    "entityId": "customer-301",
+    "features": {
+      "account_age_days": 45,
+      "total_transactions": 22,
+      "avg_transaction_value": 900.00,
+      "failed_transactions_30d": 4,
+      "countries_transacted": 5,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 2,
+      "last_login_days_ago": 0,
+      "support_tickets_open": 1
+    },
+    "scoringProfile": "fraud-detection-v1",
+    "_expectedDecision": "REVIEW",
+    "_notes": "Borderline: verified but high failure rate and multi-country activity"
+  },
+  {
+    "requestId": "score-006",
+    "entityId": "business-512",
+    "features": {
+      "account_age_days": 365,
+      "total_transactions": 310,
+      "avg_transaction_value": 2500.00,
+      "failed_transactions_30d": 1,
+      "countries_transacted": 8,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 0,
+      "last_login_days_ago": 2,
+      "support_tickets_open": 0
+    },
+    "scoringProfile": "cross-border-v1",
+    "_expectedDecision": "REVIEW",
+    "_notes": "International business: high transaction value, many countries, needs review"
+  },
+  {
+    "requestId": "score-007",
+    "entityId": "customer-007",
+    "features": {
+      "account_age_days": 730,
+      "total_transactions": 42,
+      "avg_transaction_value": 12000.00,
+      "failed_transactions_30d": 0,
+      "countries_transacted": 2,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 0,
+      "last_login_days_ago": 5,
+      "support_tickets_open": 0
+    },
+    "scoringProfile": "high-value-v1",
+    "_expectedDecision": "APPROVE",
+    "_notes": "High value transactions but clean record, established account"
+  },
+  {
+    "requestId": "score-008",
+    "entityId": "customer-404",
+    "features": {
+      "account_age_days": 5,
+      "total_transactions": 3,
+      "avg_transaction_value": 8000.00,
+      "failed_transactions_30d": 2,
+      "countries_transacted": 3,
+      "kyc_status": "UNVERIFIED",
+      "risk_flag_count": 5,
+      "last_login_days_ago": 0,
+      "support_tickets_open": 3
+    },
+    "scoringProfile": "fraud-detection-v1",
+    "_expectedDecision": "ESCALATE",
+    "_notes": "Maximum risk: brand new, unverified, multiple risk flags, suspicious pattern"
+  },
+  {
+    "requestId": "score-009",
+    "entityId": "business-100",
+    "features": {
+      "account_age_days": 540,
+      "total_transactions": 200,
+      "avg_transaction_value": 750.00,
+      "failed_transactions_30d": 2,
+      "countries_transacted": 2,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 0,
+      "last_login_days_ago": 1,
+      "support_tickets_open": 0,
+      "needs_history": true
+    },
+    "scoringProfile": "credit-risk-v2",
+    "_expectedDecision": "APPROVE",
+    "_notes": "Solid business account, needs history to confirm trend — likely APPROVE"
+  },
+  {
+    "requestId": "score-010",
+    "entityId": "customer-555",
+    "features": {
+      "account_age_days": 90,
+      "total_transactions": 35,
+      "avg_transaction_value": 600.00,
+      "failed_transactions_30d": 6,
+      "countries_transacted": 4,
+      "kyc_status": "VERIFIED",
+      "risk_flag_count": 2,
+      "last_login_days_ago": 0,
+      "support_tickets_open": 2,
+      "high_risk_time_window": true
+    },
+    "scoringProfile": "fraud-detection-v1",
+    "_expectedDecision": "ESCALATE",
+    "_notes": "High failure rate, multiple risk flags, active in high-risk time window"
+  }
+]

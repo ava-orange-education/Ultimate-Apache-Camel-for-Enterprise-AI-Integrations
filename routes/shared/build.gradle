@@ -1,0 +1,12 @@
+// routes/shared — common processors and validators shared across all route modules
+dependencies {
+    api project(':core')
+    api project(':ai')
+
+    api "org.apache.camel.springboot:camel-spring-boot-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-direct-starter:${camelVersion}"
+
+    testImplementation "org.apache.camel:camel-test-spring-junit5:${camelVersion}"
+    testImplementation 'org.springframework.boot:spring-boot-test'
+    testImplementation 'org.springframework:spring-test'
+}

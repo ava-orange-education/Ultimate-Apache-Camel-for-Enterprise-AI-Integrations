@@ -1,0 +1,13 @@
+{
+  "documentId": "doc-001",
+  "title": "Introduction to Retrieval-Augmented Generation",
+  "content": "Retrieval-Augmented Generation (RAG) is an AI framework that enhances large language model (LLM) outputs by integrating external knowledge retrieval into the generation process. Rather than relying solely on knowledge encoded in model parameters during training, RAG systems dynamically retrieve relevant documents or passages from an external knowledge base at inference time.\n\nThe RAG pipeline typically consists of three main components: an embedding model that converts text into dense vector representations, a vector store that indexes these embeddings for efficient similarity search, and a generative LLM that synthesizes the retrieved context with the user query to produce a grounded response.\n\nKey advantages of RAG include: reduced hallucination rates because answers are anchored to retrieved facts, the ability to update knowledge without retraining the LLM, improved traceability since source documents can be cited, and lower compute costs compared to fine-tuning large models.\n\nCommon vector stores used in RAG implementations include Qdrant, Pinecone, Weaviate, and pgvector. Apache Camel provides integration routes that can automate the ingestion of documents into these stores and orchestrate the retrieval and generation steps as enterprise-grade pipelines.",
+  "mimeType": "text/plain",
+  "sourceUri": "internal://knowledge-base/rag-intro",
+  "ingestedAt": "2025-11-01T08:00:00Z",
+  "metadata": {
+    "category": "AI",
+    "tags": "RAG,LLM,embeddings,vector-store",
+    "author": "AI Book Team"
+  }
+}

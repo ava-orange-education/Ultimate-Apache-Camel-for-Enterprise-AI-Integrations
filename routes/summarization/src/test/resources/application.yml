@@ -1,0 +1,35 @@
+# Test configuration for the summarization module
+spring:
+  application:
+    name: summarization-test
+
+# Camel configuration
+camel:
+  springboot:
+    main-run-controller: false
+  main:
+    # Exclude REST-heavy routes that cause failures in unit tests without a servlet container.
+    # Uses Ant-path style pattern matching on fully-qualified class names.
+    java-routes-exclude-pattern: >-
+      **/SummaryOutputRoute*,**/IngestionRoute*
+  component:
+    mock:
+      lazy-start-producer: false
+
+# AI pipeline configuration for tests
+aibook:
+  llm:
+    model-name: llama3.2
+    base-url: http://localhost:11434
+    timeout-seconds: 30
+  pipeline:
+    max-retry-attempts: 1
+    retry-delay-ms: 100
+    dead-letter-channel: log:deadLetter
+
+# Neo4j
+spring.neo4j:
+  uri: bolt://localhost:7687
+  authentication:
+    username: neo4j
+    password: password

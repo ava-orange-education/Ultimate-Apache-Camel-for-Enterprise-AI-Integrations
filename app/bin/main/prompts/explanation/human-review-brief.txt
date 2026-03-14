@@ -1,0 +1,14 @@
+Summarize the following AI decision record for a human reviewer in bullet points.
+
+Decision record:
+{{artifact}}
+
+Your summary must include:
+- What entity was assessed and what type of assessment was performed
+- What decision was made (APPROVE / REVIEW / ESCALATE)
+- The key evidence that drove the decision (top 3 features or signals)
+- The confidence level and risk score
+- What action the reviewer needs to take
+
+Format as a bullet list. Use plain, professional language. Be concise — max 8 bullets.
+Do not add any preamble or closing remarks outside the bullet list.

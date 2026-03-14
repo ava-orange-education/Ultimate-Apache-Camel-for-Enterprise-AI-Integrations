@@ -1,0 +1,57 @@
+// app — Spring Boot entry-point, wires all route modules
+plugins {
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    // All route modules
+    implementation project(':routes:summarization')
+    implementation project(':routes:rag')
+    implementation project(':routes:scoring')
+    implementation project(':routes:graph')
+    implementation project(':routes:explanation')
+    implementation project(':routes:shared')
+
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Camel Spring Boot
+    implementation "org.apache.camel.springboot:camel-spring-boot-starter:${camelVersion}"
+    implementation "org.apache.camel.springboot:camel-servlet-starter:${camelVersion}"
+    implementation "org.apache.camel.springboot:camel-management-starter:${camelVersion}"
+    implementation "org.apache.camel.springboot:camel-jackson-starter:${camelVersion}"
+    implementation "org.apache.camel.springboot:camel-openapi-java-starter:${camelVersion}"
+    implementation "org.apache.camel.springboot:camel-resilience4j-starter:${camelVersion}"
+
+    // LangChain4j autoconfigure (pulls in embeddings + chat models)
+    implementation "dev.langchain4j:langchain4j-spring-boot-starter:${langchain4jVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.apache.camel:camel-test-spring-junit5:${camelVersion}"
+}
+
+springBoot {
+    mainClass = 'com.aibook.app.Application'
+}
+
+// Forward -Pjvm.log.path (set by the demo bat) as a JVM system property so
+// logback-spring.xml resolves ${LOG_PATH} to the project-root logs/ directory.
+bootRun {
+    if (project.hasProperty('jvm.log.path')) {
+        jvmArgs "-DLOG_PATH=${project.property('jvm.log.path')}"
+    }
+}
+
+// Produce an executable jar and a plain jar for inter-module reuse
+bootJar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+jar {
+    enabled = true
+    archiveClassifier = 'plain'
+}

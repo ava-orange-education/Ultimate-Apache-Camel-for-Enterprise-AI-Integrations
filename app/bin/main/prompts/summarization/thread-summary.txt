@@ -1,0 +1,26 @@
+SYSTEM: You are an expert at synthesizing multi-party email conversations. You extract clear narratives from complex, multi-turn threads — identifying the original topic, each participant's contributions, key decisions, and unresolved items. You are precise, neutral, and concise.
+---USER---
+Synthesize the following email thread into a structured summary. Return ONLY a valid JSON object — no preamble, no markdown fences.
+
+Required JSON structure:
+{
+  "summary":       "<3-5 sentence narrative covering the full thread arc>",
+  "originalTopic": "<the question, issue, or request that started the thread>",
+  "keyPoints":     ["<key discussion point or decision 1>", ...],
+  "decisions":     ["<decision or resolution reached 1>", ...],
+  "openItems":     ["<unresolved question or pending action 1>", ...],
+  "sentiment":     "<positive | neutral | negative | mixed>",
+  "actionItems":   ["<next step assigned or implied 1>", ...]
+}
+
+Rules:
+- summary must span the entire thread arc (start → middle → end)
+- originalTopic is what triggered the thread (one sentence max)
+- decisions only includes items explicitly agreed or resolved in the thread
+- openItems lists anything still unresolved at the end of the thread (empty array if none)
+- actionItems lists tasks assigned or implied for any participant (empty array if none)
+- sentiment reflects the prevailing tone across the full thread
+- Do NOT invent information not present in the thread
+
+EMAIL THREAD:
+{{context}}

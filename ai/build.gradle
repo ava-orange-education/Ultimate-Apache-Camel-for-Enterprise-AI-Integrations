@@ -1,0 +1,49 @@
+// ai — LLM/Embedding/Vector/Graph integration services
+dependencies {
+    api project(':core')
+
+    // ── Camel AI components ────────────────────────────────────────────────────
+    // camel-langchain4j-chat-starter 4.10.0 requires langchain4j-core 0.36.x.
+    // With langchain4jVersion=0.36.0 these are fully compatible.
+    // NOTE: These starters are declared for future migration of inline LLM processor
+    // calls to camel langchain4j-chat: / langchain4j-embeddings: endpoint URIs.
+    // Current routes use LlmGateway and EmbeddingService directly.
+    api "org.apache.camel.springboot:camel-langchain4j-chat-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-langchain4j-embeddings-starter:${camelVersion}"
+
+    // camel-qdrant 4.10.0 — kept for future direct qdrant: endpoint URI usage.
+    // Current routes use QdrantVectorStore (LangChain4j QdrantEmbeddingStore) directly.
+    api "org.apache.camel:camel-qdrant:${camelVersion}"
+
+    // LangChain4j core + OpenAI + Ollama + embeddings
+    api "dev.langchain4j:langchain4j:${langchain4jVersion}"
+    api "dev.langchain4j:langchain4j-open-ai:${langchain4jVersion}"
+    api "dev.langchain4j:langchain4j-ollama:${langchain4jVersion}"
+    api "dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:${langchain4jVersion}"
+    api "dev.langchain4j:langchain4j-qdrant:${langchain4jVersion}"
+
+    // Neo4j Java Driver
+    api "org.neo4j.driver:neo4j-java-driver:${neo4jDriverVersion}"
+
+    // Qdrant gRPC client
+    api "io.qdrant:client:${qdrantClientVersion}"
+
+    // SnakeYAML — for loading cypher-queries.yml at runtime
+    implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
+
+    // Spring context for @Component / @Configuration
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+
+    // ── Test dependencies ─────────────────────────────────────────────────────
+    testImplementation 'org.springframework.boot:spring-boot-test'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation "org.apache.camel:camel-test-spring-junit5:${camelVersion}"
+
+    // Mockito for mocking ChatLanguageModel, EmbeddingModel, QdrantEmbeddingStore
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+
+    // Neo4j test harness — embedded Neo4j for integration tests
+    testImplementation "org.neo4j.test:neo4j-harness:${neo4jHarnessVersion}"
+}

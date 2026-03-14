@@ -1,0 +1,6 @@
+{
+  "query": "What is Retrieval-Augmented Generation?",
+  "expected_answer_keywords": ["RAG", "retrieval", "generation", "knowledge base", "vector", "LLM"],
+  "minimum_chunks_retrieved": 1,
+  "acceptable_score_range": [0.6, 1.0]
+}

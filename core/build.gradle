@@ -1,0 +1,18 @@
+// core — domain: DTOs, processors, config, error handling
+dependencies {
+    api "org.apache.camel:camel-api:${camelVersion}"
+    api "org.apache.camel:camel-core-model:${camelVersion}"
+    api "org.apache.camel:camel-support:${camelVersion}"
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
+    // Spring Boot — needed for @ConfigurationProperties, @Component, etc.
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+    api 'org.springframework:spring-context'
+
+    testImplementation 'org.springframework.boot:spring-boot-test'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation "org.apache.camel:camel-test-spring-junit5:${camelVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+}

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  logback-spring.xml  –  AI-Camel Project
+  =========================================
+  One rolling-file appender per pipeline, plus a shared/core appender and a
+  catch-all root appender (app.log).  Each pipeline logger has additivity=false
+  so its messages go ONLY to the pipeline-specific file and the console.
+
+  Log files produced:
+    logs/app.log                   – catch-all (root logger)
+    logs/pipeline-summarization.log
+    logs/pipeline-rag.log
+    logs/pipeline-scoring.log
+    logs/pipeline-graph.log
+    logs/pipeline-explanation.log
+    logs/pipeline-shared.log       – shared utilities, core, ai modules
+-->
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- ── Properties ─────────────────────────────────────────────────────── -->
+    <property name="LOG_DIR"     value="${LOG_PATH:-logs}"/>
+    <property name="MAX_HISTORY" value="30"/>
+    <property name="MAX_SIZE"    value="50MB"/>
+    <property name="PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{60} - %msg%n"/>
+
+    <!-- ── Console appender ────────────────────────────────────────────────── -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Root / catch-all: app.log ──────────────────────────────────────── -->
+    <appender name="APP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Pipeline 1: Summarization ──────────────────────────────────────── -->
+    <appender name="SUMMARIZATION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/pipeline-summarization.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/pipeline-summarization.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${MAX_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Pipeline 2: RAG ────────────────────────────────────────────────── -->
+    <appender name="RAG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/pipeline-rag.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/pipeline-rag.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${MAX_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Pipeline 3: Scoring ────────────────────────────────────────────── -->
+    <appender name="SCORING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/pipeline-scoring.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/pipeline-scoring.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${MAX_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Pipeline 4: Graph ──────────────────────────────────────────────── -->
+    <appender name="GRAPH_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/pipeline-graph.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/pipeline-graph.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${MAX_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Pipeline 5: Explanation / Audit / Human Review ────────────────── -->
+    <appender name="EXPLANATION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/pipeline-explanation.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/pipeline-explanation.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${MAX_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Shared / Core / AI modules ────────────────────────────────────── -->
+    <appender name="SHARED_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/pipeline-shared.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/pipeline-shared.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${MAX_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         Pipeline loggers  (additivity=false → no duplication into root/app.log)
+         ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Pipeline 1 – Summarization -->
+    <logger name="com.aibook.routes.summarization" level="DEBUG" additivity="false">
+        <appender-ref ref="SUMMARIZATION_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Pipeline 2 – RAG -->
+    <logger name="com.aibook.routes.rag" level="DEBUG" additivity="false">
+        <appender-ref ref="RAG_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Pipeline 3 – Scoring -->
+    <logger name="com.aibook.routes.scoring" level="DEBUG" additivity="false">
+        <appender-ref ref="SCORING_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Pipeline 4 – Graph -->
+    <logger name="com.aibook.routes.graph" level="DEBUG" additivity="false">
+        <appender-ref ref="GRAPH_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Pipeline 5 – Explanation / Audit / Human Review -->
+    <logger name="com.aibook.routes.explanation" level="DEBUG" additivity="false">
+        <appender-ref ref="EXPLANATION_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Shared utilities, validators, tracing -->
+    <logger name="com.aibook.routes.shared" level="DEBUG" additivity="false">
+        <appender-ref ref="SHARED_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Core processors -->
+    <logger name="com.aibook.core" level="DEBUG" additivity="false">
+        <appender-ref ref="SHARED_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- AI / vector / LLM services -->
+    <logger name="com.aibook.ai" level="DEBUG" additivity="false">
+        <appender-ref ref="SHARED_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- ── Third-party library levels ─────────────────────────────────────── -->
+    <logger name="org.apache.camel"  level="INFO"/>
+    <logger name="dev.langchain4j"   level="INFO"/>
+    <logger name="org.neo4j.driver"  level="WARN"/>
+    <logger name="org.springframework" level="INFO"/>
+
+    <!-- ── Root logger → app.log (catches everything not handled above) ───── -->
+    <root level="INFO">
+        <appender-ref ref="APP_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

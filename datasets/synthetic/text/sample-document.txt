@@ -1,0 +1,179 @@
+# Apache Camel AI Integration Pipeline — Technical Specification
+
+**Document ID:** spec-camel-ai-001
+**Version:** 2.1.0
+**Status:** APPROVED
+**Author:** AI Book Engineering Team
+**Last Updated:** 2026-02-28
+
+---
+
+## 1. Overview
+
+This document specifies the architecture and implementation requirements for the
+AI integration pipeline built on Apache Camel 4.x and LangChain4j. The pipeline
+orchestrates email/document ingestion, vector embedding, LLM summarization, graph
+enrichment, and AI-assisted scoring across a Spring Boot 3.x microservice platform.
+
+The system is designed to process high volumes of unstructured text content,
+transform it into structured AI insights, and route those insights to downstream
+business processes — all with enterprise-grade reliability, observability, and
+auditability.
+
+---
+
+## 2. Core Pipeline Stages
+
+### 2.1 Ingestion and Normalization
+
+Input content enters the system via three channels:
+
+1. **IMAP Email Polling** — the `camel-mail` component polls a configured mailbox at
+   60-second intervals. Each raw MIME message is parsed by `EmailParsingProcessor`,
+   which extracts headers, body, quoted-text sections, and attachment metadata.
+
+2. **File Drop Directory** — the `camel-file` component watches a local directory for
+   `.txt` and `.json` files deposited by external systems. The `DocumentParsingProcessor`
+   handles both plain text and structured JSON payloads.
+
+3. **REST API** — the `camel-servlet` component exposes `POST /api/summarize/email` and
+   `POST /api/summarize/document` for synchronous and asynchronous ingestion from
+   upstream applications.
+
+All three channels converge at `ContentNormalizer`, which strips MIME noise,
+collapses whitespace, and converts timestamps to ISO-8601 UTC format.
+
+### 2.2 Thread Correlation and Aggregation
+
+The `correlate-content` route aggregates related messages using Apache Camel's
+`AggregationStrategy`. Messages are correlated by the `correlationId` header, which
+is derived from the email thread ID or document batch ID.
+
+The `ThreadAggregationStrategy` maintains a growing list of normalized message parts.
+Aggregation completes when either:
+- 10 messages have been collected (size-based completion), or
+- 60 seconds have elapsed since the first message arrived (timeout-based completion).
+
+On completion, the strategy formats the collected parts into a structured
+`MULTI-DOCUMENT CONTEXT` string with part boundaries and metadata annotations.
+
+### 2.3 Summarization
+
+The `prepareForSummarization` route orchestrates three sub-steps:
+
+1. `MultiDocContextBuilder` adds structural markers (header banner, part boundaries,
+   character counts) to help the LLM understand the document structure.
+
+2. `PromptAssembler` selects the appropriate prompt template based on `SourceType`
+   (email, document, or thread), loads it from the classpath via `PromptLoader`
+   (cached), fills the `{{context}}` placeholder, and splits the template into
+   system and user messages on the `---USER---` separator.
+
+3. `LlmGateway` calls the configured LLM (Ollama local or OpenAI-compatible endpoint)
+   and returns the response. The response is wrapped in a `SummaryResult` record.
+
+### 2.4 Validation and Output
+
+`SummaryValidator` applies quality gates: the summary must be non-null, non-blank,
+and under 2,000 characters. Failures route to `direct:summaryFallback`, which logs
+the failure and captures the exchange in `datasets/golden/regression_cases/` for
+offline analysis.
+
+Valid summaries are persisted to the output directory as JSON files named
+`<correlationId>-summary.json`, forwarded to the audit trail route, and then sent
+to `direct:downstreamFlow` for integration with the scoring and graph pipelines.
+
+---
+
+## 3. Embedding and Vector Store
+
+### 3.1 Embedding Models
+
+The system supports two embedding backends configured via `aibook.embeddings.model`:
+
+| Value                     | Provider   | Dimensions | Notes                              |
+|---------------------------|------------|------------|------------------------------------|
+| `local` / `all-minilm-l6-v2` | Local ONNX | 384        | Zero network cost; best for dev    |
+| `text-embedding-3-small`  | OpenAI     | 1536       | Higher quality; requires API key   |
+| `text-embedding-ada-002`  | OpenAI     | 1536       | Legacy OpenAI embedding model      |
+
+### 3.2 Qdrant Vector Store
+
+Documents are embedded in chunks of approximately 500 characters with 20% overlap
+to preserve semantic continuity at boundaries. Chunks are stored in Qdrant
+collections defined in `vector-config/collections.yml`.
+
+The `VectorSearchService` provides a high-level API: `searchRelevantChunks(collection,
+queryText, topK)` embeds the query and retrieves the top-K matching chunks above a
+configurable minimum relevance score (`aibook.rag.min-score`).
+
+---
+
+## 4. Graph Integration
+
+### 4.1 Neo4j Graph Client
+
+The `Neo4jGraphClient` wraps the Neo4j Java Driver and exposes three operations:
+- `executeCypher(cypher, params)` — parameterised read queries
+- `writeNode(label, properties)` — MERGE-based node upsert (keyed on `id`)
+- `writeRelationship(fromId, toId, type, props)` — MERGE-based relationship upsert
+
+Labels are sanitized against a whitelist of alphanumeric characters to prevent
+Cypher injection. The driver connection pool is limited to 3 connections in the
+default configuration.
+
+### 4.2 Graph Traversal
+
+The `GraphTraversalService` loads parameterised Cypher queries from
+`graph/cypher-queries.yml` (SnakeYAML, double-checked lazy initialization) and
+returns a `GraphContext` DTO containing traversed paths, related nodes, and
+traversal depth metadata.
+
+---
+
+## 5. Error Handling and Observability
+
+### 5.1 Retry and Dead-Letter Policy
+
+All routes use `AiErrorHandler.build()` which configures:
+- Maximum 3 redeliveries with 1-second initial delay and 2× exponential back-off
+- MDC enrichment on every retry: `decisionId`, `routeId`, `exchangeId`, `retryAttempt`
+- Dead-letter channel: `direct:deadLetter`
+
+The `DeadLetterSupport` route captures the full exchange context as a structured
+JSON regression case and writes it to `datasets/golden/regression_cases/`.
+
+### 5.2 Audit Trail
+
+`AuditArtifactCollector` snapshots the exchange state at each pipeline stage into
+an `AuditRecord` record appended to the `auditTrail` exchange property. The audit
+trail is persisted by `AuditTrailRoute` to date-partitioned JSON files.
+
+### 5.3 Observability
+
+The Spring Boot Actuator exposes health, metrics, and Camel route status at
+`/actuator/*`. JMX management is enabled via `camel-management`. All route IDs
+are explicitly named to ensure consistent metric labels.
+
+---
+
+## 6. Configuration Reference
+
+All runtime configuration is externalized in `application.yml` under the `aibook.*`
+prefix, bound to the `AiPipelineProperties` record via `@ConfigurationProperties`.
+No hardcoded URLs, credentials, or model names appear in source code.
+
+Environment variable overrides follow the pattern `AIBOOK_<SECTION>_<KEY>`.
+Example: `AIBOOK_LLM_ENDPOINT=http://my-ollama:11434`.
+
+---
+
+## 7. Acceptance Criteria
+
+1. All 9 Gradle submodules compile cleanly with `./gradlew build -x test`.
+2. All unit tests pass: `./gradlew test`.
+3. `POST /api/summarize/email` with a valid JSON payload returns a `SummaryResult`.
+4. `POST /api/summarize/document` with plain text returns a `SummaryResult`.
+5. Dead-letter captures are written correctly to `datasets/golden/regression_cases/`.
+6. All Camel routes are visible in JMX and Actuator `/actuator/camel/routes`.
+7. Docker Compose brings up Qdrant, Neo4j, and Ollama with health checks passing.

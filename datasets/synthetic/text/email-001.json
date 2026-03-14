@@ -1,0 +1,11 @@
+{
+  "messageId": "email-001",
+  "from": "alice@acme.com",
+  "to": ["bob@acme.com"],
+  "cc": ["carol@acme.com"],
+  "subject": "Q4 Budget Review — Action Required",
+  "body": "Hi Bob,\n\nI wanted to follow up on our Q4 budget review meeting from last Thursday. We need to finalise the departmental allocations by end of week. Could you please send me the updated headcount projections and the revised CAPEX estimates for the data centre migration?\n\nAlso, please loop in the finance team once you have the numbers ready.\n\nBest regards,\nAlice",
+  "contentType": "text/plain",
+  "receivedAt": "2025-11-15T09:30:00Z",
+  "headers": {}
+}

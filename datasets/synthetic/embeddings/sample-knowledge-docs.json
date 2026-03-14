@@ -1,0 +1,57 @@
+[
+  {
+    "documentId": "doc-rag-001",
+    "fileName": "apache-camel-overview.txt",
+    "extractedText": "Apache Camel is an open-source integration framework based on Enterprise Integration Patterns (EIPs). It provides a rule-based routing and mediation engine that allows you to define routing rules in a variety of domain-specific languages (DSLs), including Java, XML, Groovy, and Kotlin. Apache Camel routes define how messages are routed from source endpoints to destination endpoints. Each route is defined as a chain of processing steps called processors. Camel supports over 300 components for connecting to various systems such as databases, message brokers, APIs, and file systems. The core concept is the Exchange, which wraps a message and carries metadata such as headers and properties throughout the routing pipeline. Camel integrates natively with Spring Boot, enabling auto-configuration and dependency injection of route beans.",
+    "contentType": "text/plain",
+    "metadata": {
+      "author": "AI Book Team",
+      "topic": "integration",
+      "chapter": "10"
+    }
+  },
+  {
+    "documentId": "doc-rag-002",
+    "fileName": "langchain4j-embeddings.txt",
+    "extractedText": "LangChain4j is a Java library that simplifies the integration of large language models (LLMs) into Java applications. It provides abstractions for chat models, embedding models, vector stores, and RAG pipelines. The EmbeddingModel interface allows plugging in various backends such as OpenAI's text-embedding-ada-002 or local ONNX models like all-MiniLM-L6-v2. Embeddings are dense vector representations of text that capture semantic meaning. Similar texts produce embedding vectors that are close in high-dimensional space. The EmbeddingStore interface (implemented by QdrantEmbeddingStore, ChromaEmbeddingStore, etc.) handles persistence and similarity search. LangChain4j's EmbeddingSearchRequest allows configuring the maximum number of results (maxResults) and the minimum cosine similarity threshold (minScore) for retrieval.",
+    "contentType": "text/plain",
+    "metadata": {
+      "author": "AI Book Team",
+      "topic": "embeddings",
+      "chapter": "10"
+    }
+  },
+  {
+    "documentId": "doc-rag-003",
+    "fileName": "qdrant-vector-database.txt",
+    "extractedText": "Qdrant is a vector database and vector similarity search engine written in Rust. It is designed for high-performance, production-grade vector search use cases. Qdrant stores vectors alongside their payloads (arbitrary JSON metadata) in collections. Each collection has a fixed vector dimension and a distance metric (Cosine, Euclidean, or Dot Product). The gRPC API runs on port 6334 and the REST API on port 6333. Qdrant supports filtering on payload fields during search, enabling metadata-aware retrieval. Upsert operations allow creating or updating points by their ID. Qdrant also supports on-disk storage for large-scale deployments and HNSW (Hierarchical Navigable Small World) indexing for approximate nearest-neighbor (ANN) search.",
+    "contentType": "text/plain",
+    "metadata": {
+      "author": "AI Book Team",
+      "topic": "vector-database",
+      "chapter": "10"
+    }
+  },
+  {
+    "documentId": "doc-rag-004",
+    "fileName": "rag-pipeline-architecture.txt",
+    "extractedText": "Retrieval-Augmented Generation (RAG) is an AI architecture that combines retrieval-based and generation-based approaches. In a RAG pipeline, user queries are first embedded into a vector representation. The embedding is then used to search a vector database for the most semantically similar document chunks. The retrieved chunks provide grounding context that is injected into the LLM prompt, reducing hallucination and enabling the model to answer questions based on up-to-date or domain-specific knowledge. RAG pipelines have two distinct phases: the ingestion phase (documents are chunked, embedded, and stored) and the query phase (query is embedded, relevant chunks retrieved, context assembled, LLM called). Chunking strategy significantly affects retrieval quality: smaller chunks improve precision while larger chunks improve recall.",
+    "contentType": "text/plain",
+    "metadata": {
+      "author": "AI Book Team",
+      "topic": "rag-architecture",
+      "chapter": "10"
+    }
+  },
+  {
+    "documentId": "doc-rag-005",
+    "fileName": "spring-boot-configuration.txt",
+    "extractedText": "Spring Boot 3.x provides auto-configuration and convention-over-configuration for building production-ready Java applications. Configuration is externalized in application.yml or application.properties files, allowing environment-specific overrides. The @ConfigurationProperties annotation binds YAML or properties file entries to strongly-typed Java classes, enabling type-safe configuration access. Spring Boot 3.x requires Java 17 or later and is built on Spring Framework 6.x. Apache Camel integrates with Spring Boot via the camel-spring-boot-starter dependency, which auto-configures the CamelContext and discovers RouteBuilder beans automatically. The @Value annotation injects individual properties into bean fields, while ConfigurationProperties maps entire configuration hierarchies to nested records or classes.",
+    "contentType": "text/plain",
+    "metadata": {
+      "author": "AI Book Team",
+      "topic": "spring-boot",
+      "chapter": "10"
+    }
+  }
+]

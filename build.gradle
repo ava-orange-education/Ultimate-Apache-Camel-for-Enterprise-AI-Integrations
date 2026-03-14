@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'org.springframework.boot' version '3.3.5' apply false
+    id 'io.spring.dependency-management' version '1.1.6' apply false
+}
+
+ext {
+    camelVersion            = '4.10.0'
+    langchain4jVersion      = '0.36.0'
+    neo4jDriverVersion      = '5.27.0'
+    neo4jHarnessVersion     = '5.26.5'
+    qdrantClientVersion     = '1.13.0'
+    springBootVersion       = '3.3.5'
+    lombokVersion           = '1.18.34'
+    jacksonVersion          = '2.18.2'
+    junitVersion            = '5.11.3'
+    mockitoVersion          = '5.14.2'
+    assertjVersion          = '3.26.3'
+    snakeyamlVersion        = '2.3'
+}
+
+allprojects {
+    group   = 'com.aibook'
+    version = '1.0.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'eclipse'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+            mavenBom "org.apache.camel.springboot:camel-spring-boot-bom:${camelVersion}"
+        }
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        // Lombok
+        compileOnly     "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+        testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+        // Test - JUnit 5
+        testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+        testImplementation "org.assertj:assertj-core:${assertjVersion}"
+        testRuntimeOnly   "org.junit.platform:junit-platform-launcher"
+    }
+
+    test {
+        useJUnitPlatform()
+        jvmArgs '-ea'
+
+        // Run test classes in up to 2 forked JVMs per subproject.
+        // Keep at 1 for subprojects that start a full Spring Boot context on a
+        // shared port, or use a random port in @SpringBootTest(webEnvironment =
+        // RANDOM_PORT) so multiple forks don't collide.
+        maxParallelForks = 2
+
+        testLogging {
+            events 'passed', 'skipped', 'failed'
+            exceptionFormat 'full'
+        }
+    }
+
+    compileJava.options.encoding   = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
+}

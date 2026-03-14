@@ -1,0 +1,164 @@
+spring:
+  application:
+    name: ai-camel-project
+  neo4j:
+    uri: ${AIBOOK_NEO4J_URI:bolt://localhost:7687}
+    authentication:
+      username: ${AIBOOK_NEO4J_USERNAME:neo4j}
+      password: ${AIBOOK_NEO4J_PASSWORD:password}
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    max-http-header-size: 65536
+
+# ── Apache Camel ──────────────────────────────────────────────────────────────
+camel:
+  springboot:
+    name: AiCamelContext
+    main-run-controller: true
+  rest:
+    api-context-path: /api-doc
+    api-property:
+      api.title: AI Summarization API
+      api.version: 1.0.0
+  servlet:
+    mapping:
+      context-path: /camel/*
+  # ── Circuit Breaker (Resilience4j) ────────────────────────────────────────
+  # Named configurations referenced inline in each route via resilience4jConfiguration().
+  # Settings here are informational; routes configure the CB parameters inline.
+  resilience4j:
+    configurations:
+      llm-circuit-breaker:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000
+      neo4j-circuit-breaker:
+        sliding-window-size: 5
+        failure-rate-threshold: 60
+        wait-duration-in-open-state: 20000
+
+# ── Actuator ─────────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,camel,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# ── AI-Book Pipeline Properties ───────────────────────────────────────────────
+aibook:
+
+  # LLM Backend (Ollama local by default; set api-key for OpenAI-compatible)
+  llm:
+    endpoint: ${AIBOOK_LLM_ENDPOINT:http://localhost:11434}
+    model-name: ${AIBOOK_LLM_MODEL:llama3.2}
+    api-key: ${AIBOOK_LLM_API_KEY:}
+    timeout-seconds: 120
+    temperature: 0.7
+
+  # Embedding model ("local" = all-MiniLM-L6-v2 via ONNX; "openai" for cloud)
+  embeddings:
+    model: ${AIBOOK_EMBEDDINGS_MODEL:local}
+    dimensions: 384
+
+  # Qdrant vector store
+  qdrant:
+    host: ${AIBOOK_QDRANT_HOST:localhost}
+    port: ${AIBOOK_QDRANT_PORT:6334}
+    collection: ${AIBOOK_QDRANT_COLLECTION:documents}
+    use-tls: false
+
+  # Neo4j graph database
+  neo4j:
+    uri: ${AIBOOK_NEO4J_URI:bolt://localhost:7687}
+    username: ${AIBOOK_NEO4J_USERNAME:neo4j}
+    password: ${AIBOOK_NEO4J_PASSWORD:password}
+    max-connection-pool-size: 3
+
+  # Scoring
+  scoring:
+    confidence-threshold: 0.6
+    default-profile: default
+    always-fetch-history: false
+    context-source: mock
+    output-dir: ${java.io.tmpdir}/aibook/scoring
+
+  # Human review
+  human-review:
+    queue: direct:human-review
+    default-priority: MEDIUM
+    simulation:
+      delay-ms: 0
+
+  # Dead-letter
+  dead-letter:
+    log-dir: ${java.io.tmpdir}/aibook/dead-letter
+
+  # Audit
+  audit:
+    log-dir: ${java.io.tmpdir}/aibook/audit
+
+  # Human review feedback
+  feedback:
+    output-dir: ${java.io.tmpdir}/aibook/feedback
+    regression-dir: datasets/golden/regression_cases
+
+  # Summarization
+  summarization:
+    output-dir: ${java.io.tmpdir}/aibook/summaries
+
+  # RAG retrieval
+  rag:
+    top-k: 5
+    min-score: 0.3
+    chunk-max-tokens: 512
+    chunk-overlap-tokens: 50
+    max-context-chars: 8000
+    collection: ${AIBOOK_QDRANT_RAG_COLLECTION:knowledge-base}
+    output-dir: ${java.io.tmpdir}/aibook/rag
+
+  # Graph
+  graph:
+    max-auto-nodes: 50
+    max-traversal-depth: 3
+    risk-cluster-threshold: 5
+    risk-strength-threshold: 0.7
+    risk-density-threshold: 0.8
+
+  # Ingestion
+  ingestion:
+    file-drop-dir: ${java.io.tmpdir}/aibook/ingest
+
+  # Mail / IMAP ingestion (set aibook.mail.enabled=true to activate IMAP polling)
+  mail:
+    enabled: ${AIBOOK_MAIL_ENABLED:false}
+    host: ${AIBOOK_MAIL_HOST:imap.example.com}
+    username: ${AIBOOK_MAIL_USERNAME:user@example.com}
+    password: ${AIBOOK_MAIL_PASSWORD:secret}
+    folder: ${AIBOOK_MAIL_FOLDER:INBOX}
+    delete: ${AIBOOK_MAIL_DELETE:false}
+
+# ── Logging ──────────────────────────────────────────────────────────────────
+# Log levels and per-pipeline file appenders are configured in
+# src/main/resources/logback-spring.xml.
+# Each pipeline writes to its own rolling log file under logs/:
+#   logs/pipeline-summarization.log
+#   logs/pipeline-rag.log
+#   logs/pipeline-scoring.log
+#   logs/pipeline-graph.log
+#   logs/pipeline-explanation.log
+#   logs/pipeline-shared.log   (core / ai / shared utilities)
+#   logs/app.log               (catch-all root logger)
+logging:
+  config: classpath:logback-spring.xml

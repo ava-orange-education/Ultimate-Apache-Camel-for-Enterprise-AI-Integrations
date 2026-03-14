@@ -1,0 +1,135 @@
+[
+  {
+    "requestId": "enrich-001",
+    "entityId": "customer-005",
+    "score": 0.88,
+    "confidence": 0.62,
+    "routingDecision": "REVIEW",
+    "features": {
+      "account_age_days": 5,
+      "kyc_status": "UNVERIFIED",
+      "failed_transactions_30d": 8
+    },
+    "_notes": "High-risk cluster member — graphRiskElevated expected: connectedEntityCount>5, avgStrength>0.7"
+  },
+  {
+    "requestId": "enrich-002",
+    "entityId": "customer-001",
+    "score": 0.15,
+    "confidence": 0.92,
+    "routingDecision": "APPROVE",
+    "features": {
+      "account_age_days": 1200,
+      "kyc_status": "VERIFIED",
+      "failed_transactions_30d": 0
+    },
+    "_notes": "Low-risk customer — graph enrichment skipped (high confidence), graphRiskElevated=false"
+  },
+  {
+    "requestId": "enrich-003",
+    "entityId": "customer-003",
+    "score": 0.55,
+    "confidence": 0.68,
+    "routingDecision": "REVIEW",
+    "features": {
+      "account_age_days": 22,
+      "kyc_status": "PENDING",
+      "failed_transactions_30d": 5
+    },
+    "_notes": "Medium confidence triggers graph enrichment; cluster membership may elevate risk"
+  },
+  {
+    "requestId": "enrich-004",
+    "entityId": "customer-008",
+    "score": 0.91,
+    "confidence": 0.40,
+    "routingDecision": "REVIEW",
+    "features": {
+      "account_age_days": 3,
+      "kyc_status": "UNVERIFIED",
+      "failed_transactions_30d": 12,
+      "risk_flag_count": 5
+    },
+    "_notes": "Low confidence + risk flags — graphEnrichmentNeeded=true; ESCALATE expected"
+  },
+  {
+    "requestId": "enrich-005",
+    "entityId": "customer-002",
+    "score": 0.42,
+    "confidence": 0.70,
+    "routingDecision": "REVIEW",
+    "features": {
+      "account_age_days": 365,
+      "kyc_status": "VERIFIED",
+      "failed_transactions_30d": 3
+    },
+    "_notes": "Mid-range score triggers graph enrichment; low connectivity expected → contextualRouting"
+  },
+  {
+    "requestId": "enrich-006",
+    "entityId": "account-003",
+    "score": 0.75,
+    "confidence": 0.55,
+    "routingDecision": "REVIEW",
+    "features": {
+      "balance": 0.01,
+      "flagged": true,
+      "currency": "USD"
+    },
+    "_notes": "Flagged account with transfer history — graph enrichment expected to reveal risk cluster"
+  },
+  {
+    "requestId": "enrich-007",
+    "entityId": "customer-004",
+    "score": 0.31,
+    "confidence": 0.85,
+    "routingDecision": "APPROVE",
+    "features": {
+      "account_age_days": 720,
+      "kyc_status": "VERIFIED",
+      "failed_transactions_30d": 1
+    },
+    "_notes": "Low score, high confidence — graphEnrichmentNeeded=false (high confidence, low score)"
+  },
+  {
+    "requestId": "enrich-008",
+    "entityId": "device-003",
+    "score": 0.60,
+    "confidence": 0.65,
+    "routingDecision": "REVIEW",
+    "features": {
+      "deviceType": "MOBILE",
+      "vpnDetected": true,
+      "sharedByMultipleCustomers": true,
+      "risk_flag_count": 2
+    },
+    "_notes": "VPN + device shared by known risk cluster members — graphRiskElevated likely true"
+  },
+  {
+    "requestId": "enrich-009",
+    "entityId": "customer-006",
+    "score": 0.50,
+    "confidence": 0.72,
+    "routingDecision": "REVIEW",
+    "features": {
+      "account_age_days": 900,
+      "kyc_status": "VERIFIED",
+      "failed_transactions_30d": 2,
+      "graphEnrichmentNeeded": true
+    },
+    "_notes": "Caller forces graphEnrichmentNeeded=true via feature flag"
+  },
+  {
+    "requestId": "enrich-010",
+    "entityId": "customer-007",
+    "score": 0.55,
+    "confidence": 0.63,
+    "routingDecision": "REVIEW",
+    "features": {
+      "account_age_days": 180,
+      "kyc_status": "VERIFIED",
+      "failed_transactions_30d": 3
+    },
+    "_notes": "Mid confidence + mid score — enrichment triggered; connected to risk cluster via CONNECTED_TO"
+  }
+]

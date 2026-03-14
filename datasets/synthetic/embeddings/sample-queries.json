@@ -1,0 +1,37 @@
+[
+  {
+    "queryId": "q-001",
+    "query": "What is Apache Camel and how does it define routing rules?",
+    "expectedTopics": ["integration", "DSL", "routing", "Enterprise Integration Patterns"],
+    "expectedSourceDocs": ["doc-rag-001"],
+    "notes": "Should retrieve content from the Apache Camel overview document"
+  },
+  {
+    "queryId": "q-002",
+    "query": "How does LangChain4j handle embedding models and vector similarity search?",
+    "expectedTopics": ["embeddings", "EmbeddingModel", "cosine similarity", "vector store"],
+    "expectedSourceDocs": ["doc-rag-002"],
+    "notes": "Should retrieve content from the LangChain4j embeddings document"
+  },
+  {
+    "queryId": "q-003",
+    "query": "What ports does Qdrant use and what indexing algorithm does it support?",
+    "expectedTopics": ["Qdrant", "gRPC", "REST", "HNSW", "ANN"],
+    "expectedSourceDocs": ["doc-rag-003"],
+    "notes": "Should retrieve the Qdrant vector database document"
+  },
+  {
+    "queryId": "q-004",
+    "query": "Explain the two phases of a RAG pipeline and how chunking affects retrieval quality.",
+    "expectedTopics": ["ingestion", "query phase", "chunking", "hallucination", "retrieval"],
+    "expectedSourceDocs": ["doc-rag-004"],
+    "notes": "Should retrieve the RAG pipeline architecture document"
+  },
+  {
+    "queryId": "q-005",
+    "query": "How does Spring Boot 3 integrate with Apache Camel and what annotation is used for type-safe configuration?",
+    "expectedTopics": ["Spring Boot", "ConfigurationProperties", "camel-spring-boot-starter", "RouteBuilder"],
+    "expectedSourceDocs": ["doc-rag-005", "doc-rag-001"],
+    "notes": "May retrieve both Spring Boot config and Camel overview documents"
+  }
+]

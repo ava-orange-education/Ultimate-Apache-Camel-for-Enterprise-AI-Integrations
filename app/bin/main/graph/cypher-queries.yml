@@ -1,0 +1,77 @@
+# Named Cypher queries used by GraphTraversalService and data-population tooling
+queries:
+
+  # Primary traversal query used by GraphTraversalService.traverseFromEntity()
+  # Parameters: $entityId (String), $depth (int)
+  fetch-entity-subgraph: |
+    MATCH path = (root)-[*0..3]->(neighbor)
+    WHERE root.id = $entityId
+    RETURN [n IN nodes(path) | n {.*}] AS nodes,
+           [r IN relationships(path) | type(r) + ':' + startNode(r).id + '->' + endNode(r).id] AS pathStrings
+
+  # Chapter 12 — bidirectional traversal for risk-cluster detection
+  # Parameters: $entityId (String), $depth (int)
+  traverse-entity: |
+    MATCH (n {id: $entityId})-[r*1..$depth]-(related)
+    RETURN n {.*} AS root,
+           [rel IN r | {type: type(rel), strength: rel.strength}] AS relationships,
+           related {.*} AS relatedNode
+    LIMIT 100
+
+  # Chapter 12 — find tightly-connected clusters around an entity
+  # Parameters: $entityId (String)
+  find-clusters: |
+    MATCH (n {id: $entityId})-[:CONNECTED_TO*1..3]-(cluster)
+    WITH cluster, count(*) AS degree
+    WHERE degree > 3
+    RETURN cluster {.*} AS clusterNode, degree
+    ORDER BY degree DESC
+    LIMIT 20
+
+  # Ingest/upsert an entity node with arbitrary label
+  # Parameters: $id (String), $label (String), $props (Map)
+  upsert-entity: |
+    MERGE (n {id: $id})
+    SET n += $props
+    RETURN n
+
+  # Write a relationship between two nodes
+  # Parameters: $fromId (String), $toId (String), $relType (String), $props (Map)
+  write-relationship: |
+    MATCH (a {id: $fromId}), (b {id: $toId})
+    MERGE (a)-[r:CONNECTED_TO]->(b)
+    SET r += $props
+    RETURN r
+
+  # Fetch 2-hop subgraph from a Document node
+  fetch-document-subgraph: |
+    MATCH path = (d:Document {id: $id})-[*0..2]->(n)
+    RETURN nodes(path) AS nodes, relationships(path) AS rels
+
+  # Fetch all entities related to a given concept
+  fetch-concept-neighbours: |
+    MATCH (c:Concept {name: $name})<-[:MENTIONS|RELATES_TO]-(d)
+    RETURN d
+
+  # Upsert a Document node
+  upsert-document: |
+    MERGE (d:Document {id: $id})
+    SET d += $props
+    RETURN d
+
+  # Create MENTIONS relationship
+  link-document-to-concept: |
+    MATCH (d:Document {id: $docId}), (c:Concept {name: $concept})
+    MERGE (d)-[:MENTIONS]->(c)
+
+  # Seed: create Concept nodes
+  seed-concepts: |
+    UNWIND $concepts AS name
+    MERGE (c:Concept {name: name})
+    SET c.createdAt = datetime()
+
+  # Count all nodes by label
+  count-nodes-by-label: |
+    CALL apoc.meta.stats()
+    YIELD labels
+    RETURN labels

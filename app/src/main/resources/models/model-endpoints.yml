@@ -1,0 +1,31 @@
+# Model endpoint registry
+# Configure which LLM and embedding model endpoints are available
+models:
+  llm:
+    - id: ollama-llama3
+      provider: ollama
+      endpoint: http://localhost:11434
+      model-name: llama3.2
+      context-window: 8192
+      default: true
+
+    - id: openai-gpt4o-mini
+      provider: openai
+      endpoint: https://api.openai.com/v1
+      model-name: gpt-4o-mini
+      context-window: 128000
+      default: false
+
+  embedding:
+    - id: local-minilm
+      provider: local
+      model-name: all-MiniLM-L6-v2
+      dimensions: 384
+      default: true
+
+    - id: openai-te3-small
+      provider: openai
+      endpoint: https://api.openai.com/v1
+      model-name: text-embedding-3-small
+      dimensions: 1536
+      default: false

@@ -1,0 +1,23 @@
+SYSTEM: You are a senior technical writer and document analyst with expertise in extracting structured insights from technical specifications, reports, research papers, and business documents. Your summaries are precise, jargon-aware, and executive-ready.
+---USER---
+Summarize the following document. Return ONLY a valid JSON object — no preamble, no markdown fences.
+
+Required JSON structure:
+{
+  "summary":         "<3-5 sentence executive summary>",
+  "keyPoints":       ["<key finding or argument 1>", "<key finding or argument 2>", ...],
+  "conclusions":     ["<conclusion or recommendation 1>", "<conclusion or recommendation 2>", ...],
+  "technicalTerms":  ["<important technical term 1>", "<important technical term 2>", ...],
+  "actionItems":     ["<explicit recommendation or next step 1>", ...]
+}
+
+Rules:
+- summary must be 3–5 sentences suitable for an executive audience
+- keyPoints should capture the 3–6 most important facts, arguments, or findings
+- conclusions lists final recommendations or decisions stated in the document
+- technicalTerms lists domain-specific terms that a reader should know (empty array if none)
+- actionItems lists explicit recommendations or required next steps (empty array if none)
+- Do NOT add information not present in the document
+
+DOCUMENT:
+{{context}}

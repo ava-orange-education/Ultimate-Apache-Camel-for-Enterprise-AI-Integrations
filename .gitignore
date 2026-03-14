@@ -1,0 +1,31 @@
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+*.iws
+.eclipse/
+.classpath
+.project
+.settings/
+*.launch
+*.code-workspace
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Compiled classes
+*.class
+
+# JAR files (except gradle wrapper)
+*.jar
+!gradle/wrapper/gradle-wrapper.jar

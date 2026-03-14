@@ -1,0 +1,22 @@
+# Qdrant collection definitions
+# These are used by the data-population tooling (tools/utilities/seed-qdrant.py)
+collections:
+  - name: knowledge-base
+    vector_size: 384
+    distance: Cosine
+    description: "Primary knowledge base for RAG ingestion and retrieval (Chapter 10)"
+
+  - name: documents
+    vector_size: 384
+    distance: Cosine
+    description: "General document knowledge base for RAG retrieval"
+
+  - name: emails
+    vector_size: 384
+    distance: Cosine
+    description: "Email body embeddings for similarity search"
+
+  - name: summaries
+    vector_size: 384
+    distance: Cosine
+    description: "Generated summaries stored for deduplication"

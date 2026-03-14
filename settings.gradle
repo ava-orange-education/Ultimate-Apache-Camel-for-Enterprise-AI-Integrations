@@ -1,0 +1,24 @@
+rootProject.name = 'ai-camel-project'
+
+// Core and AI modules
+include 'core'
+include 'ai'
+
+// Route sub-modules
+include 'routes:summarization'
+include 'routes:rag'
+include 'routes:scoring'
+include 'routes:graph'
+include 'routes:explanation'
+include 'routes:shared'
+
+// Application entry-point
+include 'app'
+
+// Map sub-project directories for nested route modules
+project(':routes:summarization').projectDir = file('routes/summarization')
+project(':routes:rag').projectDir            = file('routes/rag')
+project(':routes:scoring').projectDir        = file('routes/scoring')
+project(':routes:graph').projectDir          = file('routes/graph')
+project(':routes:explanation').projectDir    = file('routes/explanation')
+project(':routes:shared').projectDir         = file('routes/shared')

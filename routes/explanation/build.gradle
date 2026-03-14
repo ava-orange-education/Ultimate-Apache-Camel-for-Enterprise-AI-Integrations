@@ -1,0 +1,27 @@
+// routes/explanation — explanation artifact, audit trail and human review routes
+dependencies {
+    api project(':core')
+    api project(':ai')
+    api project(':routes:shared')
+
+    api "org.apache.camel.springboot:camel-spring-boot-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-direct-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-seda-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-timer-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-jackson-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-file-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-servlet-starter:${camelVersion}"
+    api "org.apache.camel.springboot:camel-rest-starter:${camelVersion}"
+
+    // Jackson for JSON serialisation in processors
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
+    testImplementation "org.apache.camel:camel-test-spring-junit5:${camelVersion}"
+    testImplementation "org.apache.camel:camel-mock:${camelVersion}"
+    testImplementation 'org.springframework.boot:spring-boot-test'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation "jakarta.servlet:jakarta.servlet-api:6.0.0"
+}

@@ -1,0 +1,17 @@
+{
+  "requestId": "score-001",
+  "entityId": "customer-42",
+  "entityType": "Customer",
+  "features": {
+    "account_age_days": 730,
+    "total_transactions": 145,
+    "avg_transaction_value": 320.50,
+    "failed_transactions_30d": 2,
+    "countries_transacted": 3,
+    "kyc_status": "VERIFIED",
+    "risk_flag_count": 0,
+    "last_login_days_ago": 1,
+    "support_tickets_open": 0
+  },
+  "scoringProfile": "credit-risk-v2"
+}

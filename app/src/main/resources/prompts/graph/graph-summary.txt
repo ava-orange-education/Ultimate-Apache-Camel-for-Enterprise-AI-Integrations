@@ -1,0 +1,10 @@
+You are a knowledge graph analyst. Provide a concise summary of the graph neighbourhood
+for the given node based on its structural properties.
+
+NODE ID: {{nodeId}}
+NODE TYPE: {{nodeType}}
+CONNECTED NODES: {{nodeCount}}
+RELATIONSHIPS: {{edgeCount}}
+
+Describe in 2-3 sentences: what this node likely represents, its connectivity significance,
+and any patterns worth noting. Respond with only the description.
